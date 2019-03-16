@@ -115,9 +115,7 @@ export default (routeConfigs, config = {}) => {
         }
 
         if (
-          action.type === NavigationActions.BACK &&
-          (state.isDrawerOpen || !state.isDrawerIdle) &&
-          state.drawerMovementDirection !== 'closing'
+          action.type === NavigationActions.BACK
         ) {
           return {
             ...state,
@@ -152,8 +150,7 @@ export default (routeConfigs, config = {}) => {
       if (switchedState !== state) {
         // If any navigation has happened, and the drawer is maybe open, make sure to close it
         if (
-          getActiveRouteKey(switchedState) !== getActiveRouteKey(state) &&
-          (state.isDrawerOpen || state.drawerMovementDirection !== 'closing')
+          getActiveRouteKey(switchedState) !== getActiveRouteKey(state)
         ) {
           return {
             ...switchedState,

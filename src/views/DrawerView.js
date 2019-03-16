@@ -12,7 +12,7 @@ import ResourceSavingScene from '../views/ResourceSavingScene';
 /**
  * Component that renders the drawer.
  */
-export default class DrawerView extends React.PureComponent {
+export default class DrawerView extends React.Component {
   static defaultProps = {
     lazy: true,
   };
@@ -34,10 +34,25 @@ export default class DrawerView extends React.PureComponent {
       typeof this.props.navigationConfig.drawerWidth === 'function'
         ? this.props.navigationConfig.drawerWidth()
         : this.props.navigationConfig.drawerWidth,
+    isDrawerOpen: false,
   };
 
   componentDidMount() {
     Dimensions.addEventListener('change', this._updateWidth);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const {
+      openId,
+      closeId,
+      toggleId,
+    } = nextProps.navigation.state;
+    const {
+      openId: prevOpenId,
+      closeId: prevCloseId,
+      toggleId: prevToggleId
+    } = this.props.navigation.state;
+    return openId !== prevOpenId || closeId !== prevCloseId || toggleId !== prevToggleId
   }
 
   componentDidUpdate(prevProps) {
@@ -45,7 +60,6 @@ export default class DrawerView extends React.PureComponent {
       openId,
       closeId,
       toggleId,
-      isDrawerOpen,
     } = this.props.navigation.state;
     const {
       openId: prevOpenId,
@@ -64,7 +78,7 @@ export default class DrawerView extends React.PureComponent {
       } else if (id === closeId) {
         this._drawer.closeDrawer();
       } else if (id === toggleId) {
-        if (isDrawerOpen) {
+        if (this.state.isDrawerOpen) {
           this._drawer.closeDrawer();
         } else {
           this._drawer.openDrawer();
@@ -80,41 +94,46 @@ export default class DrawerView extends React.PureComponent {
   drawerGestureRef = React.createRef();
 
   _handleDrawerStateChange = (newState, willShow) => {
-    if (newState === 'Idle') {
-      if (!this.props.navigation.state.isDrawerIdle) {
-        this.props.navigation.dispatch({
-          type: DrawerActions.MARK_DRAWER_IDLE,
-          key: this.props.navigation.state.key,
-        });
-      }
-    } else if (newState === 'Settling') {
-      this.props.navigation.dispatch({
-        type: DrawerActions.MARK_DRAWER_SETTLING,
-        key: this.props.navigation.state.key,
-        willShow,
-      });
-    } else {
-      if (this.props.navigation.state.isDrawerIdle) {
-        this.props.navigation.dispatch({
-          type: DrawerActions.MARK_DRAWER_ACTIVE,
-          key: this.props.navigation.state.key,
-        });
-      }
+    // if (newState === 'Idle') {
+    //   if (!this.props.navigation.state.isDrawerIdle) {
+    //     this.props.navigation.dispatch({
+    //       type: DrawerActions.MARK_DRAWER_IDLE,
+    //       key: this.props.navigation.state.key,
+    //     });
+    //   }
+    // } else if (newState === 'Settling') {
+    //   this.props.navigation.dispatch({
+    //     type: DrawerActions.MARK_DRAWER_SETTLING,
+    //     key: this.props.navigation.state.key,
+    //     willShow,
+    //   });
+    // } else {
+    //   if (this.props.navigation.state.isDrawerIdle) {
+    //     this.props.navigation.dispatch({
+    //       type: DrawerActions.MARK_DRAWER_ACTIVE,
+    //       key: this.props.navigation.state.key,
+    //     });
+    //   }
+    // }
+    if (newState === 'Settling') {
+      this.setState({
+        isDrawerOpen: willShow,
+      })
     }
   };
 
   _handleDrawerOpen = () => {
-    this.props.navigation.dispatch({
-      type: DrawerActions.DRAWER_OPENED,
-      key: this.props.navigation.state.key,
-    });
+    // this.props.navigation.dispatch({
+    //   type: DrawerActions.DRAWER_OPENED,
+    //   key: this.props.navigation.state.key,
+    // });
   };
 
   _handleDrawerClose = () => {
-    this.props.navigation.dispatch({
-      type: DrawerActions.DRAWER_CLOSED,
-      key: this.props.navigation.state.key,
-    });
+    // this.props.navigation.dispatch({
+    //   type: DrawerActions.DRAWER_CLOSED,
+    //   key: this.props.navigation.state.key,
+    // });
   };
 
   _updateWidth = () => {

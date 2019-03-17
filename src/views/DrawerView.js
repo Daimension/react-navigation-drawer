@@ -46,13 +46,15 @@ export default class DrawerView extends React.Component {
       openId,
       closeId,
       toggleId,
+      index,
     } = nextProps.navigation.state;
     const {
       openId: prevOpenId,
       closeId: prevCloseId,
-      toggleId: prevToggleId
+      toggleId: prevToggleId,
+      index: prevIndex,
     } = this.props.navigation.state;
-    return openId !== prevOpenId || closeId !== prevCloseId || toggleId !== prevToggleId
+    return openId !== prevOpenId || closeId !== prevCloseId || toggleId !== prevToggleId || index !== prevIndex;
   }
 
   componentDidUpdate(prevProps) {
